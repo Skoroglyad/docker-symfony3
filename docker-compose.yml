@@ -13,7 +13,7 @@ services:
       - '80:80'
 
   php_fpm:
-    image: greenera/php_fpm7:latest
+    image: greenera/php-fpm7:latest
     working_dir: /usr/src/app
     volumes:
       - './app:/usr/src/app'
@@ -22,9 +22,18 @@ services:
     depends_on:
       - my_mysql
 
+  node:
+    image: greenera/node10:latest
+    volumes:
+      - ./app:/usr/src/app
+    restart: always
+    working_dir: /usr/src/app
+    command: bash -c "npm i what-input && npm install && npm run dev"
+
   my_mysql:
     image: greenera/mysql_5:latest
-#    command: --max_allowed_packet=500M #todo перевірити чи так працює, чи потібно ставити байти
+    restart: always
+    command: --max_allowed_packet=500M #todo перевірити чи так працює, чи потібно ставити байти
     volumes:
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
       - ./docker/mysql/data:/var/lib/mysql
@@ -34,26 +43,16 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
 
-  node:
-    image: greenera/node10:latest
-    volumes:
-      - ./app:/usr/src/app
-    restart: on-failure
-    working_dir: /usr/src/app
+  phpmyadmin:
     depends_on:
-      - php_fpm
-#    command: bash -c "npm && npm run dev"
-
-#  phpmyadmin:
-#    depends_on:
-#      - my_mysql
-#    image: phpmyadmin/phpmyadmin
-#    restart: always
-#    ports:
-#      - '8080:80'
-#    environment:
-#      PMA_HOST: my_mysql
-#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      - my_mysql
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: my_mysql
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
 
 #  adminer:
 #    image: adminer
