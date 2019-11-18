@@ -1,5 +1,9 @@
-upstream php-upstream {
-    server php_fpm:9000;
+upstream application {
+    server web:8001;
+    server web:8002;
+    server web:8003;
+    server web:8004;
+    server web:8005;
 }
 
 server {
@@ -12,14 +16,14 @@ server {
     }
 
     location @rewriteapp {
-        rewrite ^(.*)$ /app.php/$1 last;
+        rewrite ^(.*)$ /app_dev.php/$1 last;
     }
 
-    location ~ ^/(app|app_dev|app_test|config)\.php(/|$) {
-        fastcgi_pass php-upstream;
+    location ~ ^/(app_dev)\.php(/|$) {
+        fastcgi_pass application;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME /usr/src/app/web/app_dev.php;
         fastcgi_param HTTPS off;
     }
 }
