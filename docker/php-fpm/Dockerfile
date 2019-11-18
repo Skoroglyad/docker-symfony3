@@ -51,10 +51,8 @@ RUN curl -sS https://getcomposer.org/installer | php \
 ## Copy php default configuration
 COPY ./docker/php-fpm/default.ini /usr/local/etc/php/conf.d/default.ini
 
-WORKDIR /usr/src/app
-
-COPY app /usr/src/app
-
+#WORKDIR /usr/src/app
+#COPY app /usr/src/app
 #RUN composer install
 
 CMD ["php-fpm"]

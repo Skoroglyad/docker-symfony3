@@ -3,9 +3,9 @@ FROM node:10
 WORKDIR /usr/src/app
 
 #COPY ./app/package*.json ./
-COPY ./app /usr/src/app
+#COPY ./app /usr/src/app
 
-RUN npm install
+#RUN npm install
 
 
 #EXPOSE 8080
