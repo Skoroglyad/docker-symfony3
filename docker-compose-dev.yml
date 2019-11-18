@@ -13,17 +13,19 @@ services:
       - '80:80'
 
   php_fpm:
-    image: greenera/php_fpm7:latest
-    working_dir: /usr/src/app
+    build:
+      context: .
+      dockerfile: ./docker/php-fpm/Dockerfile
     volumes:
       - './app:/usr/src/app'
-    command: bash -c 'composer install'
+#    command: sh -c 'composer install --no-interaction --optimize-autoloader && php-fpm'
     restart: always
     depends_on:
       - my_mysql
 
   my_mysql:
-    image: greenera/mysql_5:latest
+    build:
+      context: ./docker/mysql
 #    command: --max_allowed_packet=500M #todo перевірити чи так працює, чи потібно ставити байти
     volumes:
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
@@ -35,7 +37,7 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
 
   node:
-    image: greenera/node10:latest
+    image: node:11-alpine
     volumes:
       - ./app:/usr/src/app
     restart: on-failure
